@@ -1,0 +1,36 @@
+Install pytest
+	pip install pytest
+
+Assertion
+	pytest filename.py
+	pytest -q filename.py
+
+Run one functionn
+	pytest -q filename.py::functionname
+	
+Run all functions with mark 
+	@pytest.mark.markname
+	pytest -v -m markname
+	
+Exit at failure
+	pytest -v -x filename.py
+	pytest -v -x --tb=no filename.py 
+	pytest -v --maxfail=2 filename.py 
+
+Skip a function
+	@pytest.mark.skip(reason="do not run add")
+	pytest -v -rsx
+
+Skip a function if condition
+	@pytest.mark.skipif(sys.version_info < (3, 3))
+	
+Eecute any print statement in function
+	pytest -v -s filename.py::fucntionname
+
+Parametrized (to not repeat same function calling)
+	@pytest.mark.parametrize('x', 'y', 'result',[
+												(7, 3, 10)
+												('Hello', 'World', 'Hello World')
+												(10.5, 25.5, 36)
+												])
+	pytest -v filename.py

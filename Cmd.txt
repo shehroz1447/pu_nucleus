@@ -1,0 +1,23 @@
+Command Line (CMD)
+
+Current User
+whoami
+
+Current path
+cd
+
+Move 1 path back
+cd ..
+
+Move to given path
+cd /users/shehroz.abdullah
+
+Current path files
+dir 
+
+Clear Screen
+cls
+
+Print
+echo
+

@@ -1,0 +1,6 @@
+Change Default Python Version on Linux(RHEL)
+
+1. vim ~/.bashrc.
+3. Type alias python=python3 on the top in a new line
+4. Save the file
+5. Type source ~/.bashrc. Now your alias should be permanent.

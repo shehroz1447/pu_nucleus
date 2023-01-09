@@ -1,0 +1,363 @@
+SQL
+UDACITY: SQL FOR DATA ANALYSIS: https://classroom.udacity.com/courses/ud198
+----------------------------------------------------------------------
+LESSON 1: BASIC SQL
+SELECT			
+	SELECT Col1, Col2, ...			Provide the columns you want
+
+FROM			
+	FROM Table						Provide the table where the columns exist
+
+LIMIT			
+	LIMIT 10						Limits based number of rows returned
+
+ORDER BY		
+	ORDER BY Col					Orders table based on the column. Used with DESC.
+
+WHERE			
+	WHERE Col > 5					A conditional statement to filter your results
+
+LIKE			
+	WHERE Col LIKE '%me%'			Only pulls rows where column has 'me' within the text
+
+IN				
+	WHERE Col IN ('Y', 'N')			A filter for only rows with column of 'Y' or 'N'
+
+NOT				
+	WHERE Col NOT IN ('Y', 'N')		NOT is frequently used with LIKE and IN
+
+AND				
+	WHERE Col1 > 5 AND Col2 < 3		Filter rows where two or more conditions must be true
+
+OR				
+	WHERE Col1 > 5 OR Col2 < 3		Filter rows where at least one condition must be true
+
+BETWEEN			
+	WHERE Col BETWEEN 3 AND 5		Often easier syntax than using an AND (Only For Integers)
+----------------------------------------------------------------------
+LESSON 2: SQL JOINS
+	JOIN				
+		SELECT * FROM table 1 t1
+		JOIN table2 t2
+		ON t2.id = t1.id
+----------------------------------------------------------------------
+LESSON 3: SQL AGGREGATIONS
+	
+	COUNT
+		SELECT COUNT(col_name)
+		
+	SUM
+		SELECT SUM(col_name)
+
+	MIN
+		SELECT MIN(col_name)
+
+	MAX
+		SELECT MAX(col_name)
+
+	AVG
+		SELECT AVG(col_name)
+
+	GROUP BY (AFTER WHERE)
+		GROUP BY(col_name)
+
+	DISTINCT (IN SELECT)
+		SELECT DISTINCT(col_name) AS ALIAS
+
+	HAVING (AFTER GROUP BY)
+		HAVING (condition)		
+
+	DATE_TRUNC 
+		SELECT DATE_TRUNC('day', col_name) AS ALIAS
+
+	DATE_PART 
+		SELECT DATE_PART('day', col_name) AS ALIAS
+	
+	NOTE: DATE FORMAT = 2015-10-06T17:31:14.000Z
+
+	CASE (INTRODUCES A NEW COLUMN)
+		SELECT CASE 
+		WHEN condition THEN result
+		ELSE result2 
+		END 
+		AS ALIAS
+		FROM TABLE
+
+----------------------------------------------------------------------
+LESSON 4: SQL SUBQUERIES AND TEMPORARY TABLES
+
+FROM SUBQUERY
+	SELECT *
+	FROM (SUBQUERY) AS ALIAS
+
+WHERE SUBQUERY
+	SELECT *
+	FROM ORDERS
+	WHERE (SUBQUERY) AS ALIAS
+
+COMMON TABLE EXPRESSION (CTE)		
+	WITH CTE AS (SUBQUERY)
+	SELECT * 
+	FROM CTE
+
+MULTI COMMON TABLE EXPRESSION (CTE)		
+	WITH CTE1 AS (SUBQUERY1) CTE2 AS (SUBQUERY2)
+	SELECT * 
+	FROM T1
+	JOIN T2
+	ON T1.id = T2.id
+----------------------------------------------------------------------
+LESSON 5: SQL DATA CLEANING
+
+LEFT/RIGHT/LENGTH
+	LEFT(col_name, X) AS ALIAS
+	RIGHT(col_name, X) AS ALIAS
+
+	OR
+
+	LEFT(col_name, LENGTH(col_name) - Y) AS ALIAS
+	RIGHT(col_name, LENGTH(col_name) - Y) AS ALIAS
+
+	WHERE X + Y = LENGTH(col_name)
+
+STRPOS
+	STRPOS(col_name, ',') AS ALIAS
+
+CONCAT
+	CONCAT(col_name, ' ', col2_name)
+
+REPLACE
+	REPLACE(col_name, ' ', '')
+
+CAST
+	CAST(XXX AS DATE)
+
+CONVERT MONTH TO NUMBER
+	DATE_PART('month', TO_DATE(month, 'month')) AS clean_month
+
+SUBSTR
+	SUBSTR(col_name, startpos, extendchar)
+
+COALESCE --> To Fill Null
+	COALESCE(col_name, 'not a null')
+
+----------------------------------------------------------------------
+LESSON 6: SQL WINDOW FUNCTION (ADVANCED)
+	
+WINDOW FUNCTION 
+	Constant
+	SUM(col_name) OVER (PARTITION BY col_name2) AS ALIAS
+
+	Running
+	SUM(col_name) OVER (ORDER BY col_name2) AS ALIAS
+
+	Partitioned Running
+	SUM(col_name) OVER (PARTITION BY col_name2 ORDER BY col_name3) AS ALIAS
+
+ROW_NUMBER
+	Running
+	ROW_NUMBER() OVER (ORDER BY col_name) AS ALIAS
+	
+	Partitioned Running
+	ROW_NUMBER() OVER (PARTITION BY col_name ORDER BY col_name2) AS ALIAS
+	
+RANK (Skip Repeated Ranks)
+	Running (Row with same col_name have same rank)
+	RANK() OVER (ORDER BY col_name) AS ALIAS
+	
+	Partitioned Rank (Row with same col_name2 have same rank)
+	RANK() OVER (PARTITION BY col_name ORDER BY col_name2) AS ALIAS
+	
+DENSE_RANK (No Skip of Repeated Ranks)
+	Running (Row with same col_name have same dense rank)
+	DENSE_RANK() OVER (ORDER BY col_name) AS ALIAS
+	
+	Partitioned Rank (Row with same col_name2 have same dense rank)
+	DENSE_RANK() OVER (PARTITION BY col_name ORDER BY col_name2) AS ALIAS
+
+MULTIPLE WINDOW ALIAS (BETWEEN WHERE AND GROUP BY) (You can replace code after AS with 'main_window')
+	WINDOW main_window AS (PARTITION BY col_name ORDER BY col_name2) 
+	
+LAG/LEAD 
+	LAG(col_name) OVER (ORDER BY col_name) AS ALIAS
+	LEAD(col_name) OVER (ORDER BY col_name) AS ALIAS
+
+PERCENTILES (DIVIDING A COLUMN)
+	NTILE(x) OVER (ORDER BY col_name) AS ALIAS
+----------------------------------------------------------------------
+LESSON 7: SQL ADVANCED JOINS AND PERFORMANCE TUNING (ADVANCED)
+
+LEFT JOIN
+	LEFT JOIN Table_B ON Table_A.column_name = Table_B.column_name
+
+RIGHT JOIN
+	RIGHT JOIN Table_B ON Table_A.column_name = Table_B.column_name
+
+OUTER JOIN
+	FULL OUTER JOIN Table_B ON Table_A.column_name = Table_B.column_name
+	
+UNAMTCHED
+	FULL OUTER JOIN Table_B ON Table_A.column_name = Table_B.column_name
+	WHERE Table_A.column_name IS NULL OR Table_B.column_name IS NULL
+	
+INEQUALITY JOINS
+	JOIN Table_B ON Table_A.column_name = Table_B.column_name
+	AND Table_A.column_name2 < Table_B.column_nam2
+	
+SELF JOINS
+	FROM table t1 LEFT JOIN table t2 ON t1.account_id = t2.column_name
+	AND t1.column_name > t2.column_name
+	AND t1.column_name <= t2.column_name + INTERVAL '1 day'
+	
+UNION (REMOVED DUPLICATES)
+	SELECT * FROM accounts
+	UNION
+	SELECT * FROM accounts
+	
+UNION ALL (DOES NOT REMOVED DUPLICATES)	
+	SELECT * FROM accounts
+	UNION ALL
+	SELECT * FROM accounts
+	
+PERFORMANCE TIPS
+	For exploration, use limited rows
+	For aggregations, limit does not work. Aggregations are done before the limit. Hence utilze subquery.
+	Prefer Where over Having
+	For large joins, pre aggregate your table, for less rows to be scanned, using subquery.
+	Append EXPLAIN to pop the query plan.
+	
+MOD
+	MOD(col_name, x)
+
+---------------------------------------------------------------------
+ADDITIONAL THINGS TO COVER
+
+MATERIALIZED VIEW CREATION
+	CREATE MATERIALIZED VIEW MY_MAT_VIEW
+	[ WITH (storage_parameter [ = value][, ...]) ]
+	[ TABLESPACE tablespace_name ]
+	AS SELECT * FROM table
+
+MATERIALIZED VIEW REFRESH
+	REFRESH MATERIALIZED VIEW MY_MAT_VIEW
+	USER DEFINED FUNCTIONS (UDFs)
+
+---------------------------------------------------------------------
+DML (CRUD)
+
+SELECT
+	SELECT * FROM table_name
+
+INSERT
+	INSERT INTO table_name (column1 , column2 ,  ... )
+	VALUES (row1_value1, row1_value2, ... ),
+		   (row2_value1, row2_value2, ... );
+
+UPDATE
+	UPDATE table_name
+	SET column1 = value1, column2 = value2, ...
+	WHERE condition;
+
+DELETE
+	DELETE FROM table_name
+	WHERE condition;
+
+---------------------------------------------------------------------
+DDL
+
+CREATE
+	CREATE TABLE table_name (
+    column1 datatype, column2 datatype, column3 datatype, ....);
+
+	EXAMPLE
+		CREATE TABLE BookShop (
+			BOOK_ID VARCHAR(4) NOT NULL, 
+			TITLE VARCHAR(100) NOT NULL, 
+			AUTHOR_NAME VARCHAR(30) NOT NULL, 
+			AUTHOR_BIO VARCHAR(250),
+			AUTHOR_ID INTEGER NOT NULL, 
+			PUBLICATION_DATE DATE NOT NULL, 
+			PRICE_USD DECIMAL(6,2) CHECK(Price_USD>0) NOT NULL
+			);
+
+
+CREATE AS 
+	CREATE TABLE new_table_name AS
+    SELECT column1, column2,...
+    FROM existing_table_name
+    WHERE ....;
+
+ALTER (Alter add column(s))
+	ALTER TABLE table_name
+	ADD COLUMN column_name datatype
+	ADD COLUMN column_name2 datatype;
+
+ALTER (Delete Column)	
+	ALTER TABLE table_name
+	DROP COLUMN column_name;
+
+ALTER (Change Datatype)	
+	ALTER TABLE table_name
+	ALTER COLUMN phone 
+	SET DATA TYPE VARCHAR(20);
+
+TRUNCUATE (Delete Data but not Table)
+	TRUNCUATE TABLE table_name IMMEDIATE;
+
+DROP (Delete Data and Table)
+	DROP TABLE table_name
+---------------------------------------------------------------------
+
+ADD KEYS 
+
+PRIMARY KEY
+	ALTER TABLE BookShop
+	ADD PRIMARY KEY (BOOK_ID);
+
+FOREIGN KEY
+	ALTER TABLE BookShop
+	ADD CONSTRAINT fk_BookShop FOREIGN KEY (AUTHOR_ID)
+		REFERENCES BookShop_AuthorDetails(AUTHOR_ID)
+		ON UPDATE NO ACTION
+		ON DELETE NO ACTION;
+
+---------------------------------------------------------------------
+
+PRACTICE (YOU WROTE THIS)
+
+Q: MEDIAN FOR EVEN NUMBER
+
+WITH COUNT_CTE AS (SELECT COUNT(*)/2 FROM ORDERS)
+
+CASE WHEN COUNT_CTE % 2 = 0
+ELSE 
+END AS EVEN/ODD
+
+SELECT 
+(
+	(
+		(
+		SELECT MAX(total_amt_usd) 
+		FROM (
+			SELECT total_amt_usd
+			FROM orders
+			ORDER BY 1
+			LIMIT (SELECT COUNT(*)/2 FROM ORDERS)
+			) X
+		) 
+	  
+		+              
+	 
+		(
+		SELECT MIN(total_amt_usd) 
+		FROM (
+			SELECT total_amt_usd
+			FROM orders
+			ORDER BY 1 DESC
+			LIMIT (SELECT COUNT(*)/2 FROM ORDERS)
+			) Y
+		)
+	) / 2
+) AS MEDIAN
+
+FROM orders

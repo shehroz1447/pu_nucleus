@@ -1,0 +1,97 @@
+HADOOP/HIVE
+------------
+
+HADOOP COMMANDS
+---------------
+
+BASIC HADOOP COMMANDS
+	hadoop fs - ls /
+	hadoop fs -mkdir /data
+	hadoop fs -ls /data
+	hadoop fs -mkdir /data/sufian
+	hadoop fs -mkdir /data/sufian/transactional
+	hadoop fs -rm /data/username/sufian
+
+HDFS LOAD
+	hadoop fs -put transactions.csv /data/sufian/transactional
+	hadoop fs -moveFromLocal transactions.csv /data/sufian/transactional/
+	hadoop fs -D dfs.blocksize=1048576 -put transactions.csv /data/sufian/transactional/
+	Move files from HDFS
+	hadoop fs -get /data/sufian/transactional/transactions.csv transactions1.csv
+
+FILE HEALTH 
+	hdfs fsck /data/sufian/transactional -files -blocks -locations
+	find /hadoop/hdfs/data -type f -name blk_1073744220
+
+FILE OPEN
+	hadoop fs -ls /data/sufian/transactional/*|wc -l
+	hadoop fs -cat /data/sufian/transactional/transactionsappend.csv|head -10
+	hadoop fs -cat /data/sufian/transactional/transactionsappend.csv|grep 923111470351
+
+HDFS SAVE
+	hadoop fs -put transactions.csv.gz /data/sufian/transactional/
+	hadoop fs -text transactions.csv.gz /data/sufian/transactional/
+
+CHANGE PERSMISSION
+	hdfs dfs –chmod –R 777 /shehroz
+
+EXTRACT FILE ?
+	gzip transactions.csv
+
+HIVE Commands
+-------------
+
+BASIC db/table COMMANDS
+	Hive or Beeline to Start Shell
+	CREATE DATABASE shehroz;
+	SHOW DATABASES;
+	SHOW TABLES;
+	DROP DATABASE shehroz;
+	DESCRIBE shehroz;
+	USE shehroz;
+	SHOW TABLES;
+	DROP TABLE trsn;
+
+CREATE TABLE
+	CREATE EXTERNAL TABLE salaries (gender string, age int, salary double, zip int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION '/user/train/salaries/';
+
+	SKEW --> data with a lot of repeating data stored in seperate files
+	CREATE TABLE Customers (id int, username string, zip int) SKEWED BY (zip) ON (57701, 57702) STORED as DIRECTORIES;
+
+	BUCKETING --> Bucketing decomposes data into more manageable or equal parts
+	create table employees (id int, name string, salary double) clustered by (id) into 16 buckets;
+
+	PARTITION --> Partition divides large amount of data into multiple slices based on value of a table column
+	create table names (id int, name string) partitioned by (state string) row format delimited fields terminated by '\t';
+	show partitions names;
+
+LOAD DATA
+	LOAD DATA LOCAL INPATH '/tmp/customers.csv' OVERWRITE INTO TABLE customers;
+	LOAD DATA LOCAL INPATH '/root/labs/demos/hivedata_ca.txt' OVERWRITE INTO TABLE partition (state = 'CA'); --> Load for Partitions
+
+SQL COMMANDS
+	SELECT * FROM shehroz LIMIT 10;
+	SELECT count(*) FROM shehroz;
+	INSERT INTO birthdays SELECT firstName, lastName, birthday FROM customers WHERE birthday IS NOT NULL;
+
+
+	select * from table_name [order | sort] by column_name;
+		ORDER --> complete ordering	of data done by a single reducer
+		SORT  --> data output is sorted per reducer
+
+	select * from dataset distribute by age;
+		distribute --> Rows with the same distribute by columns	will go	to the same	reducer
+
+SAVE TABLE
+	INSERT OVERWRITE DIRECTORY '/user/train/ca_or_sd/' select name, state from names where state = 'CA' or state = 'SD';
+	INSERT OVERWRITE LOCAL DIRECTORY '/tmp/myresults/' SELECT * FROM bucketnames ORDER BY age;
+
+JOINS
+	SHUFFLE JOINS
+	SELECT * FROM customer JOIN order ON customer.id = order.cid;
+
+	MAP OR BROADCAST JOIN
+	SELECT /*+ MAPJOIN(states) */ customers.*, states.* FROM customers JOIN states ON (customers.state = states.state);
+
+	SORT MERGE BUCKET JOIN 
+	???

@@ -1,0 +1,37 @@
+POSTGRES
+
+
+CREATE DATABASE mydb;
+
+\c mydb;
+
+DROP DATABASE mydb;
+
+CREATE TABLE movies(
+   ID      		INT      PRIMARY KEY NOT NULL UNIQUE,
+   NAME    		CHAR(50)             NOT NULL,
+   RATING  		REAL                 NOT NULL,
+   MONEY_MADE 	INT					 NOT NULL
+);
+
+\d movies
+
+DROP TABLE movies;
+
+CREATE SCHEMA media;
+
+DROP SCHEMA media;
+
+INSERT INTO movies (ID,NAME,RATING,MONEY_MADE) VALUES (1, 'The God Father 1', 9.2, 225251452);
+INSERT INTO movies (ID,NAME,RATING,MONEY_MADE) VALUES (2, 'Interstellar', 8.8, 125231552);
+INSERT INTO movies (ID,NAME,RATING,MONEY_MADE) VALUES (3, 'Dunkirk', 8.5, 201230131);
+INSERT INTO movies (ID,NAME,RATING,MONEY_MADE) VALUES (4, 'The God Father 2', 9.1, 258566522);
+INSERT INTO movies (ID,NAME,RATING,MONEY_MADE) VALUES (5, 'Inception', 8.8, 134516751);
+
+SELECT * FROM movies;
+
+IMPORT CSV TO TABLE
+	COPY persons(first_name, last_name, dob, email)
+	FROM 'C:\Users\Shehroz Abdullah\Desktop\Downloads\persons.csv'
+	DELIMITER ','
+	CSV HEADER;

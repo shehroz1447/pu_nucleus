@@ -1,0 +1,311 @@
+PYSPARK
+-------
+
+Libraries
+	from pyspark import *
+	from pyspark.sql import *	
+	from pyspark.sql.functions import *
+	
+Initialize Session
+	from pyspark.sql import SparkSession 
+ 	spark = SparkSession.builder.master("local").getOrCreate() 
+
+# Print the tables in the catalog
+	print(spark.catalog.listTables())
+
+SPARK CORE
+----------
+
+BASIC RDD COMMANDS
+	default sparf configurations --> sc._conf.getAll()
+	rdd = sc.paralellize(range(1,100),10)
+	rdd.cache()
+	rdd.unpresist()
+	rdd = rdd.repartition(12) --> can increase or decrease partitions
+	rdd = rdd.coalesce(5) --> preferred (smart partition) --> can not increase partitions
+	rdd.collect()
+	rdd.getNumPartitions()
+	rdd.take(10)  
+	rdd.count()
+	rdd = sc.textFile('book.txt')
+	rdd = rdd.dropDuplicates() 
+
+RDD LAMBDA EXPRESSION
+	rdd = rdd.flatMap(lambda line: line.split(" ")) --> inputs != outputs
+	rdd = rdd.map(lambda line: line.split(" ")) --> inputs = outputs
+
+	fib = [0,1,1,2,3,5,8]
+	result = list(filter(lambda x: x % 2, fib))
+	print(result)
+
+SPARK SQL
+---------
+BASIC DF COMMANDS
+	df.printSchema() 
+	df.columns
+	df.show()
+	df.head()
+	df.tail()
+	df.describe().show()
+	df.toPandas()
+
+READ TO DF
+	spark = ss.builder.appName('Basics').getOrCreate()
+	df = spark.read.parquet('path')
+	df = spark.read.load("examples/src/main/resources/people.csv", format="csv", sep=",", inferSchema="true", header="true")
+	df = spark.read.orc("examples/src/main/resources/users.orc")(df.write.format("orc").option("orc.bloom.filter.columns", "favorite_color").option("orc.dictionary.key.threshold", "1.0").option("orc.column.encoding.direct", "name").save("users_with_options.orc"))
+	df = spark.read.format('com.databrixks.spark.xml').option('inferSchema','true').option('rootTag','employees').option('rowTag','employee').load(path)	
+	df = spark.read.format('jdbc').option('url','connectionpath').option('user','root').option('password','rdr2').load()	
+	df = sc.parallelize(Array('steak','yes',12),('pizza','no',21),('burger','no',23)).toDF('favfood', 'sauce', 'age')
+
+REPARTITION/COALESCE
+	df = df.repartition(5) --> repartition can increase or decrease partitions									
+	df = df.coalesce(5)	   --> coalesce can only decrease partitions 
+	df.repartition("Year", "Month", "Day", "Country") --> repartition with columns 
+	df.rdd.getNumPartitions()
+
+ADD
+	df.withColumn('newage', df['age']).show
+	df.withColumn('newage', df.age).show
+
+TRIGNOMETRY
+	df.withcolumn('halfage',df['age']/2).show()
+
+SELECT
+	df.select('age', firstName).show()
+	df.select("title", when(dataframe.title != 'ODD HOURS', 1).otherwise(0)).show(10)
+
+WHERE
+	df.where(df.age == 2).collect()
+
+FILTER
+	df.filter((df.confirmed > 10) & (df.province == 'Daegu')).show()
+	df.filter(df.age > 3).collect()
+
+DROP
+	df.drop("publisher", "published_date").show(5)
+
+JDBC Connection
+	pyspark --driver-class-path dremio-jdbc-driver-17.0.0-202107060524010627-31b5222b.jar --jars dremio-jdbc-driver-17.0.0-202107060524010627-31b5222b.jar
+	pyspark --driver-class-path mysql-connector-java-8.0.26.jar --jars mysql-connector-java-8.0.26.jar
+
+	jdbcDF = spark.read \
+	    .format("jdbc") \
+	    .option("url", "jdbc:dremio:direct=ae085571f05fc46b2a2acc62e81142e3-dfabed7d7b244ad6.elb.us-east-1.amazonaws.com:9047") \
+	    .option("dbtable", "`Staging Dev VDS.Global.S3.Milestone_Term_Mapping_Site`") \
+	    .option("user", "shehroz.abdullah") \
+	    .option("password", "dremio@3220") \
+	    .load()
+
+STATS
+	df.stat.corr("Obesity", "Deaths") --> corr
+	df.stat.crsosstab('loan_status', 'grade').show()
+	df.stat.freqItems(['purpose', 'grade'], 0.3) 
+
+RENAME COLUMNS
+	TWO
+		df.withColumnRenamed('age','newage').show()
+	ALL
+		df.toDF(*['case_id', 'province', 'city', 'group'])
+
+SORT
+	ASCENDING
+		df.sort("confirmed").show()
+	
+	DESCENDING
+		from pyspark.sql import functions as F
+		df.sort(F.desc("confirmed")).show()
+
+CHANGE DATA TYPE or CAST
+	One Column
+		df = df.withColumn("Obesity",df.Obesity.cast('double'))
+	Two Columns
+		df = df.withColumn("Obesity",df.Obesity.cast('double')).withColumn("Deaths",df.Deaths.cast('double'))
+	ALL Columns
+		for col in df.columns:
+			df = df.withColumn(col, F.col(col).cast("double"))
+
+STRING SELECTION
+	df.select("author", "title", df.title.like("% THE %")).show(5)
+	df.select("author", "title", df.title.startswith("THE")).show(5)
+	df.select("author", "title", df.title.endswith("NT")).show(5)
+
+GROUP BY
+	df.groupBy().avg().show()	
+	sorted(df.groupBy('name').agg({'age': 'mean'}).collect())
+	sorted(df.groupBy(df.name).avg().collect())
+	sorted(df.groupBy(['name', df.age]).count().collect())?
+	df.groupBy(["province","city"]).agg(F.sum("confirmed"), F.max("confirmed")).show()
+	
+BASIC SQL QUERY
+	df.createOrReplaceTempView('table123')
+	spark.sql ('SELECT * FROM table123 LIMIT 2').show()
+	spark.sql ('SELECT * FROM table123 ORDER BY age').show()
+	spark.sql ('SELECT * FROM table123 WHERE age = 32').show()
+	spark.sql ('SELECT count(1)as buisnesses FROM biz').show()
+	spark.sql("SELECT * FROM parquet.`examples/src/main/resources/users.parquet`")
+
+SAVE FILE
+	df.write.csv('/mr-history/sample.csv', header=True)
+	df.write.mode("overwrite").csv("/FileStore/tables/save.csv")
+	df.write.format('parquet').saveasTable('loan_data')
+	
+CLEAN DATA
+	FROM pyspark.sql.function import regexp_replace, regexp_extract, col 
+	spark.sql ('SELECT Distinct dirty_col FROM table').show()
+
+	REPLACE A SUBSTRING
+		df.select(regexp_replace(col('dirty_col'), "years|year|\\+|\\<" , "")).alias('clean_col'),  ).show('dirty_col')	
+		df = df.withColumn('clean_country', regexp_replace(col('Country'), "A|B" , ""))
+
+	EXTRACT A SUBSTRING	
+		df.select(regexp_extract(col('dirty_col'), "\\d+", 0).alias('clean_col'), col()).show('dirty_col')
+		df = df.withColumn('clean_country', regexp_extract(col('Country'), "A" , 0))
+
+	MEAN REPLACEMENT
+		def fill_avg(df, col):
+			return df.select(col).agg(avg(col))
+		rev_avg = fill_avg(df, 'digitcleaned')
+		rev_avg = fill_avg(df, 'digitcleaned').first()[0]
+		df = df.withColumn('rev_avg', lit(rev_avg))
+		df = df.withColumn('digitcleaned', colaesce(col('digitcleaned'), col('rev_avg'))) --> merge columns --> use col2 if col1 is null
+		df.show() 
+
+	CONDITIONAL NEW COLUMN
+		df = df.withColumn('bad_loan', when(df.loan_status.isin(['Late (31-120 days),'Late (16-30 days)']),'Yes').otherwise('No'))
+
+JOINS WITH COMMON COL
+	df = df.join(df2, ['province','city'], how = 'left') 
+	
+		from pyspark.sql.functions import broadcast
+	df = df.join(broadcast(regions), ['province','city'], how = 'left')
+
+JOINS WITH NO COMMON COL
+	df = df1.join(df2, $'name' === $'firstname')
+	df = df1.join(df2, $'name' === $'firstname' && $'date' >= $'start_date')?
+
+MEAN/STDEV OF COL
+	One Column
+		df.select(mean(col('Population'))).show()
+	All Columns
+		df.select(*[F.mean(c) for c in df.columns]).show()
+
+FILL OR DROP NAN/NULL
+	One Column
+		df = df.na.fill(value = 0, subset = ['col']) 
+		df = df.na.drop('all', subset=["col"])
+		df = df.filter(df.Deaths != 'NA')
+	
+	Two Columns
+		df = df.na.fill(value = 0, subset = ['col', 'col1']) 
+		df = df.na.drop(subset=["Obesity", "Deaths"]) 
+
+	All Columns
+		df = df.na.fill(0)
+		df = df.na.drop()
+ 	
+UNIQUE VALUES COUNT
+	from pyspark.sql.functions import col, countDistinct
+	One Column
+	df.agg(countDistinct(col("colName")).alias("count")).show()
+	All Columns
+	df.agg(*(countDistinct(col(c)).alias(c) for c in df.columns)).show()
+
+
+COUNT NAN/NULL
+	Count NAN 
+		ONE Column 
+			df2.select([count(when(isnan('Undernourished'),True))]).show()
+		All Columns 
+			df2.select([count(when(isnan(x), x)).alias(x) for x in df2.columns]).show()
+
+	Count NULL
+		ONE Column 
+			df2.select([count(when(col('Undernourished').isNull(),True))]).show()
+		All Columns 
+			df2.select([count(when(col(x).isNull(), x)).alias(x) for x in df2.columns]).show()
+
+	Count NAN + NULL
+		ONE Column 
+			df2.select([count(when(isnan('Undernourished') | col('Undernourished').isNull() , True))]).show()
+		All Columns 
+			df2.select([count(when(isnan(x) | col(x).isNull(), x)).alias(x) for x in df2.columns]).show()
+
+UDF
+	def casesHighLow(confirmed):
+	    if confirmed < 50: 
+	        return 'low'
+	    else:
+	        return 'high'
+	    
+	casesHighLowUDF = F.udf(casesHighLow, StringType())
+	CasesWithHighLow = cases.withColumn("HighLow", casesHighLowUDF("confirmed"))
+	CasesWithHighLow.show()
+
+Window
+	from pyspark.sql.window import Window
+
+	Ranking
+		windowSpec = Window().partitionBy(['province']).orderBy(F.desc('confirmed'))
+		cases.withColumn("rank",F.rank().over(windowSpec)).show()
+
+	Lag Variables
+		windowSpec = Window().partitionBy(['province']).orderBy('date')
+		timeprovinceWithLag = timeprovince.withColumn("lag_7",F.lag("confirmed", 7).over(windowSpec))
+		timeprovinceWithLag.filter(timeprovinceWithLag.date>'2020-03-10').show()
+
+	Rolling Aggregations
+		windowSpec = Window().partitionBy(['province']).orderBy('date').rowsBetween(-6,0)
+		timeprovinceWithRoll = timeprovince.withColumn("roll_7_confirmed",F.mean("confirmed").over(windowSpec))
+		timeprovinceWithRoll.filter(timeprovinceWithLag.date>'2020-03-10').show()
+
+		windowSpec = Window().partitionBy(['province']).orderBy('date').rowsBetween(Window.unboundedPreceding,Window.currentRow)
+		timeprovinceWithRoll = timeprovince.withColumn("cumulative_confirmed",F.sum("confirmed").over(windowSpec))
+		timeprovinceWithRoll.filter(timeprovinceWithLag.date>'2020-03-10').show()
+
+Pivoting
+	pivotedTimeprovince = timeprovince.groupBy('date').pivot('province').agg(F.sum('confirmed').alias('confirmed') , F.sum('released').alias('released'))
+	pivotedTimeprovince.limit(10).toPandas()
+
+	unpivotedTimeprovince = pivotedTimeprovince.select('date',F.expr(exprs))
+
+Salting
+	cases = cases.withColumn("salt_key", F.concat(F.col("infection_case"), F.lit("_"), F.monotonically_increasing_id() % 10))
+	cases_temp = cases.groupBy(["infection_case","salt_key"]).agg(F.sum("confirmed")).show()
+	cases_answer = cases_temp.groupBy(["infection_case"]).agg(F.sum("salt_confirmed").alias("final_confirmed"))
+	cases_answer.show()
+
+PERSISTENT TABLES
+	df.write.option("path", "/some/path").saveAsTable("t")
+	df.write.bucketBy(42, "name").sortBy("age").saveAsTable("people_bucketed")
+	df.write.partitionBy("favorite_color").format("parquet").save("namesPartByColor.parquet")
+	df = spark.read.parquet("examples/src/main/resources/users.parquet")(df.write.partitionBy("favorite_color").bucketBy(42, "name").saveAsTable("users_partitioned_bucketed"))?
+
+RDD TO DF (DIRECT --> SIMPLE STRUCTURE) OR DIRECT SCHEMA
+	lines = sc.textfile('path')
+	parts = lines.map(lambda l: l.split(','))
+	people = parts.map(lambda p: Row(name=p[0], age=int(p[1])))
+	df = spark.createDataFrame(people)?
+
+RDD TO DF (STRUCTFIELD --> COMPLEX STRUCTURE) OR INFERRED SCHEMA
+	lines = sc.textfile('path')
+	parts = lines.map(lambda l: l.split(','))
+	people = parts.map(lambda p:(p[0], p[1].strip()))
+	schema = ([StructType('age', IntegerType(), True) , StructType('name', StringType(), True)])
+	df = spark.createDataFrame(people, schema)?
+
+GET NUMBER OF PARTITIONS
+	rdd.getNumPartitions()
+	df.rdd.getNumPartitions()
+
+CHANGE NUMBER OF PARTITIONS
+	df = df.repartition(6)
+	df = df.coalesce(6) --> decrease only
+
+	spark = (
+    SparkSession
+    .builder
+    .appName("Your App Name")
+    .config("spark.some.config.option1", "some-value")
+    .config("spark.some.config.option2", "some-value")
+    .getOrCreate())

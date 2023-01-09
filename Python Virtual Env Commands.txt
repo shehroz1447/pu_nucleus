@@ -1,0 +1,14 @@
+WINDOWS/LINUX CREATE PYTHON VENV
+python -m venv {venv_name}
+
+WINDOWS ACTIVATE VENV
+{venv_name}/Scripts/activate
+
+LINUX ACTIVATE VENV
+source {venv_name}/bin/activate
+
+WINDOWS/LINUX DEACTIVATE VENV
+deactivate
+
+WINDOWS/LINUX DELETE VENV
+rmdir {venv_name}

@@ -1,0 +1,21 @@
+AWS
+
+IAM
+https://www.youtube.com/watch?v=UqKWHZ36yEM&ab_channel=edureka%21
+
+S3
+https://www.youtube.com/watch?v=9HsEMyKrlnw&ab_channel=edureka%21
+
+CLOUDFRONT
+https://www.youtube.com/watch?v=sQNONcj0cvc&ab_channel=edureka%21
+
+EC2
+https://www.youtube.com/watch?v=iHX-jtKIVNA&ab_channel=StephaneMaarek
+https://www.youtube.com/watch?v=8TlukLu11Yo&ab_channel=Simplilearn
+
+EMR + Spark
+https://www.youtube.com/playlist?list=PLlgLmuG_KgbYzloqmmAZLbHnpzHyfhQxz
+https://www.youtube.com/watch?v=An8tw4lEkaI&ab_channel=LevelUp
+
+Glue
+https://www.youtube.com/watch?v=taR2hRZ2AwI&ab_channel=Intellipaat

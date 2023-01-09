@@ -1,0 +1,23 @@
+CRONTAB (BASH)
+
+Initate
+crontab
+
+List all jobs
+crontab -l (for logged in user)
+sudo crontab -u root -l (for user root)
+
+Create/Edit job
+crontab -e (for logged in user)
+sudo crontab -u root -e (for user root)
+
+Format
+m h dom mon dow command
+44 15 * * * /usr/bin/echo "this is a test" > /home/jay/testfile.txt
+@hourly /usr/bin/echo "this is a test" >> /home/jay/testfile.txt
+
+> create file
+>> append to file
+
+Keywords
+@hourly, @daily, @weekly, @monthly

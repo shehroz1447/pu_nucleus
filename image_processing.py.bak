@@ -1,0 +1,206 @@
+# Packages
+import cv2
+import numpy as np
+import os
+from imutils.video import FileVideoStream
+from imutils.video import VideoStream
+from imutils.video import FPS
+import argparse
+import imutils
+import time
+from matplotlib import pyplot as plt
+
+### 1 - Load
+img = cv2.imread(r'C:\Users\shehroz.abdullah\Desktop\sample.jpg')
+
+### 2 - Show
+#cv2.imshow('img', img)
+#cv2.waitKey(0)
+
+### 3 - Save
+cv2.imwrite("C:\\Users\\shehroz.abdullah\\Desktop\\results\\3.png", img)
+cv2.waitKey(0)
+
+### 4 - Image Resize
+#print('Original Dimensions : ',img.shape)
+#dim = (400, 300)
+#resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+#print('Resized Dimensions : ',resized.shape)
+#cv2.imshow("Resized image", resized)
+#cv2.waitKey(0)
+
+### 5 - Image Shape
+#print('Image Shape: ',img.shape)
+
+### 6 - Put Text
+#window_name = 'Image'
+#font = cv2.FONT_HERSHEY_SIMPLEX
+#org = (50, 50)
+#fontScale = 1
+#color = (255, 0, 0)
+#thickness = 2
+#image = cv2.putText(img, 'Sample Text', org, font, fontScale, color, thickness, cv2.LINE_AA)
+#cv2.imshow(window_name, image) 
+#cv2.waitKey(0)
+
+### 7 - Draw Line
+#window_name = 'Line Image'
+#start_point = (0, 0)
+#end_point = (400, 300)
+#color = (255, 255, 0)
+#thickness = 9
+#image = cv2.line(img, start_point, end_point, color, thickness)
+#cv2.imshow(window_name, image) 
+#cv2.waitKey(0)
+
+### 8 - Draw Rectangle
+#window_name = 'Rectangle Image'
+#start_point = (5, 5)
+#end_point = (220, 120)
+#color = (255, 0, 0)
+#thickness = 2
+#image = cv2.rectangle(img, start_point, end_point, color, thickness)
+#cv2.imshow(window_name, image) 
+#cv2.waitKey(0)
+
+### 9 - Draw Circle
+#window_name = 'Circle Image'
+#center_coordinates = (120, 50)
+#radius = 20
+#color = (255, 0, 0)
+#thickness = 2
+#image = cv2.circle(img, center_coordinates, radius, color, thickness)
+#cv2.imshow(window_name, image)
+#cv2.waitKey(0)
+
+### 10 - Draw Square
+#window_name = 'Square Image'
+#start_point = (5, 5)
+#end_point = (220, 220)
+#color = (255, 0, 0)
+#thickness = 2
+#image = cv2.rectangle(img, start_point, end_point, color, thickness)
+#cv2.imshow(window_name, image) 
+#cv2.waitKey(0)
+
+### 11  - COnvert RGB to Grayscale
+#gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#cv2.imshow('Gray image', gray)
+#cv2.waitKey(0)
+
+### 12  - COnvert Grayscale to RGB
+#image = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+#cv2.imshow('RGB image', img)
+#cv2.waitKey(0)
+
+### 13 - Webcam Stream
+#vs = VideoStream(src = 0).start()
+#while True:
+#    frame = vs.read()                    
+#    cv2.imshow("Frame", frame)
+#    key = cv2.waitKey(1) & 0xFF
+#    if key == ord("q"):
+#       break
+            
+### 14 - Read Video
+#vs = FileVideoStream(r'C:\Users\shehroz.abdullah\Desktop\sample_video.avi').start()
+#while True:
+#    frame = vs.read()                   
+#    cv2.imshow("Frame", frame)
+#    key = cv2.waitKey(1) & 0xFF
+#    if key == ord("q"):
+#        break
+
+### 15 - Blur       
+#window_name = 'Blur Image'
+#ksize = (10, 10)
+#image = cv2.blur(img, ksize) 
+#cv2.imshow(window_name, image) 
+#cv2.waitKey(0)
+
+### 16 - Detect Edges
+#edges = cv2.Canny(img,100,200)
+#plt.subplot(111),plt.imshow(edges,cmap = 'gray')
+#plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+#plt.show()
+
+### 17 - Detect Contour
+#img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#ret, thresh = cv2.threshold(img_gray, 150, 255, cv2.THRESH_BINARY)
+#contours, hierarchy = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
+#image_copy = img.copy()
+#cv2.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+#cv2.imshow('Contour Image', image_copy)
+#cv2.waitKey(0)
+
+### 18 - Crop
+#cropped_image = img[80:280, 150:300]
+#cv2.imshow("cropped", cropped_image)
+#cv2.waitKey(0)
+
+### 19 - Sharpen
+#kernel = np.array([[0, -1, 0],[-1, 5,-1],[0, -1, 0]])
+#image_sharp = cv2.filter2D(src=img, ddepth=-1, kernel=kernel)
+#cv2.imshow('Sharpened', image_sharp)
+#cv2.waitKey()
+
+### 20 - Identity Filter
+#kernel1 = np.array([[0, 0, 0],[0, 1, 0],[0, 0, 0]])
+#identity = cv2.filter2D(src=img, ddepth=-1, kernel=kernel1)
+#cv2.imshow('Identity Filter', identity)
+#cv2.waitKey()
+
+### 21 - Gaussian Filter
+#gaussian = cv2.GaussianBlur(src=img, ksize=(5,5), sigmaX=0, sigmaY=0)
+#cv2.imshow('Gaussian Filter', gaussian)
+#cv2.waitKey()
+
+### 22 - Median Filter
+#median = cv2.medianBlur(img, 3)
+#cv2.imshow('Median Filter', median)
+#cv2.waitKey()
+
+### 23 - Average Filter
+#average = cv2.boxFilter(img, -1, (10, 10), normalize=True)  
+#cv2.imshow('Average Filter', average)
+#cv2.waitKey(0)
+
+### 24 - Histogram  
+#histr = cv2.calcHist([img],[0],None,[256],[0,256])
+#plt.plot(histr)
+#plt.show()
+
+### 25 - Template Matching
+#img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#template = cv2.imread(r'C:\Users\shehroz.abdullah\Desktop\template.jpg', 0)
+#w, h = template.shape[::-1]
+#res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
+#threshold = 0.8
+#loc = np.where( res >= threshold)
+#for pt in zip(*loc[::-1]):
+#    cv2.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0,255,255), 2)
+#cv2.imshow('Detected',img)
+#cv2.waitKey(0)
+
+### 26 - xNegative
+#img_neg = 255 - img
+#cv2.imshow('Xnegative',img_neg)
+#cv2.waitKey(0)
+
+### 27 - Thresholding
+#image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#ret, thresh1 = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY)
+#cv2.imshow('Binary Threshold', thresh1)
+#cv2.waitKey(0)
+
+###28 - Log Transformation
+#c = 255 / np.log(1 + np.max(img))
+#log_image = c * (np.log(img + 1))
+#log_image = np.array(log_image, dtype = np.uint8)
+#plt.imshow(log_image)
+#plt.show()
+
+### 29 - Power Law Transformation
+#gamma_point_four = np.array(255*(img/255)**0.4,dtype='uint8')
+#cv2.imshow('Power Law', gamma_point_four)
+#cv2.waitKey(0)

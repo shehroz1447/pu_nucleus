@@ -1,0 +1,38 @@
+KAFKA
+
+START ZOOKEEPER IN NEW TERMINAL
+cd kafka_2.12-2.8.0
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+START BROKER IN NEW TERMINAL
+cd kafka_2.12-2.8.0
+bin/kafka-server-start.sh config/server.properties
+
+CREATE TOPIC IN NEW TERMINAL
+cd kafka_2.12-2.8.0
+bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --topic news
+
+LIST ALL TOPICS
+kafka-topics --bootstrap-server localhost:9092 --list
+
+TOPIC DETAILS
+kafka-topics --bootstrap-server localhost:9092 --describe log_topic
+
+DELETE TOPIC
+kafka-topics --bootstrap-server localhost:9092 --topic log_topic --delete
+
+CREATE PRODUCER NO KEY
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic log_topic
+
+CREATE PRODUCER KEY
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic log_topic --property parse.key=true --property key.separator=,
+
+START CONSUMER IN NEW TERMINAL (READ LATEST) (OFFSET 1)
+cd kafka_2.12-2.8.0
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic news
+
+START CONSUMER IN NEW TERMINAL (READ ALL) (OFFSET 0)
+cd kafka_2.12-2.8.0
+bin/kafka-console-consumer.sh  --bootstrap-server localhost:9092 --topic news --from-beginning
+
+Kafka uses the directory /tmp/kakfa-logs/news-0 to store messages

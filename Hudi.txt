@@ -1,0 +1,244 @@
+HUDI
+-----
+
+/////// Tasks
+select sum(minutes) from raw.transactions;
+select * from raw.transactions where A_PARTY_NUMBER='923111470351';
+delete from raw.transactions where where A_PARTY_NUMBER='923111470351';
+
+select sum(minutes) from raw.transactions;
+select sum(minutes) from raw.transactions where version='previous';
+select * from raw.transactions where A_PARTY_NUMBER='923111470351';
+select * from raw.transactions where A_PARTY_NUMBER='923111470351' and version='previous';
+
+Create another table same as above and set the name as curated table transactions.
+MERGE INTO CURATEDTABLE.transactions
+     USING (SELECT * 
+            FROM raw.transactions 
+            ) AS source 
+       ON source.A_PARTY_NUMBER = trg.A_PARTY_NUMBER
+     WHEN MATCHED THEN
+       UPDATE SET minutes = src.minutes+trg.minutes
+     WHEN NOT MATCHED THEN
+       INSERT (A_PARTY_NUMBER, B_PARTY_NUMBER, BUS_DT,Activity_Type,Number_of_minutes);
+
+
+
+START
+	pyspark --packages org.apache.hudi:hudi-spark3-bundle_2.12:0.9.0,org.apache.spark:spark-avro_2.12:3.0.1 --conf spark.serializer=org.apache.spark.serializer.KryoSerializer
+
+INSERT
+	tableName = "hudi_trips_cow"
+	basePath = r"C:\Data\hudi_trips_cow"
+	dataGen = sc._jvm.org.apache.hudi.QuickstartUtils.DataGenerator()
+	inserts = sc._jvm.org.apache.hudi.QuickstartUtils.convertToStringList(dataGen.generateInserts(10))
+	df = spark.read.json(spark.sparkContext.parallelize(inserts, 2))
+
+	df = spark.read.load(r"‪C:\Data\transactions.csv", format="csv", sep=",", inferSchema="true", header="true")
+
+	hudi_options = {
+	    'hoodie.table.name': tableName,
+	    'hoodie.datasource.write.recordkey.field': 'id',
+	    'hoodie.datasource.write.partitionpath.field': 'Activity_Type',
+	    'hoodie.datasource.write.table.name': tableName,
+	    'hoodie.datasource.write.operation': 'upsert',
+	    'hoodie.datasource.write.precombine.field': 'BUS_DT',
+	    'hoodie.upsert.shuffle.parallelism': 2,
+	    'hoodie.insert.shuffle.parallelism': 2
+	}
+	
+df.write.format("hudi").options(**hudi_options).mode("overwrite").save(basePath)
+
+	from pyspark import *
+	from pyspark.sql import *	
+	from pyspark.sql.functions import *
+
+ADD INDEX
+	df = df.select("*").withColumn("id", monotonically_increasing_id())
+
+
+spark.sql("SELECT sum(Number_of_minutes) FROM transactions").show()
+spark.sql("Delete from transactions WHERE A_PARTY_NUMBER = '923111470351'
+	  
+hudi_delete_options = {
+  'hoodie.table.name': tableName,
+  'hoodie.datasource.write.recordkey.field': 'id',
+  'hoodie.datasource.write.partitionpath.field': 'Activity_Type',
+  'hoodie.datasource.write.table.name': tableName,
+  'hoodie.datasource.write.operation': 'delete',
+  'hoodie.datasource.write.precombine.field': 'BUS_DT',
+  'hoodie.upsert.shuffle.parallelism': 2, 
+  'hoodie.insert.shuffle.parallelism': 2
+}
+
+	
+deletes = list(map(lambda row: (row[0], row[1]), ds.collect()))
+df = spark.sparkContext.parallelize(deletes).toDF(['id','Activity_Type']).withColumn('BUS_DT', lit(0.0))
+df.write.format("hudi").options(**hudi_delete_options).mode("append").save(basePath)
+
+roAfterDeleteViewDF = spark.read.format("hudi").load(basePath + "/*/*")
+roAfterDeleteViewDF.registerTempTable("transactions2")
+
+commits = list(map(lambda row: row[0], spark.sql("select distinct(_hoodie_commit_time) as commitTime from  hudi_trips_snapshot order by commitTime").limit(50).collect()))
+beginTime = commits[len(commits) - 2]
+
+QUERY
+	transactions = spark.read.format("hudi").load(basePath + "/*/*")
+	transactions.createOrReplaceTempView("transactions")
+
+	spark.sql("SELECT sum(Number_of_minutes) FROM transactions").show()
+	spark.sql("select fare, begin_lon, begin_lat, ts from  hudi_trips_snapshot where fare > 20.0").show()
+	spark.sql("select _hoodie_commit_time, _hoodie_record_key, _hoodie_partition_path, rider, driver, fare from  hudi_trips_snapshot").show()
+
+UPDATE DATA
+	updates = sc._jvm.org.apache.hudi.QuickstartUtils.convertToStringList(dataGen.generateUpdates(10))
+	df = spark.read.json(spark.sparkContext.parallelize(updates, 2))
+	df.write.format("hudi"). \
+	  options(**hudi_options). \
+	  mode("append"). \
+	  save(basePath)
+
+INCREMENTAL QUERY
+	spark. \
+	  read. \
+	  format("hudi"). \
+	  load(basePath + "/*/*/*/*"). \
+	  createOrReplaceTempView("hudi_trips_snapshot")
+
+	commits = list(map(lambda row: row[0], spark.sql("select distinct(_hoodie_commit_time) as commitTime from  hudi_trips_snapshot order by commitTime").limit(50).collect()))
+	beginTime = commits[len(commits) - 2] # commit time we are interested in
+
+	# incrementally query data
+	incremental_read_options = {
+	  'hoodie.datasource.query.type': 'incremental',
+	  'hoodie.datasource.read.begin.instanttime': beginTime,
+	}
+
+	tripsIncrementalDF = spark.read.format("hudi"). \
+	  options(**incremental_read_options). \
+	  load(basePath)
+	tripsIncrementalDF.createOrReplaceTempView("hudi_trips_incremental")
+
+	spark.sql("select `_hoodie_commit_time`, fare, begin_lon, begin_lat, ts from  hudi_trips_incremental where fare > 20.0").show()
+
+
+Resources
+---------
+https://www.youtube.com/watch?v=eesJXFuTsbk
+https://hudi.apache.org/docs/quick-start-guide
+
+
+# Open pyspark session with hudi 
+pyspark --packages org.apache.hudi:hudi-spark3-bundle_2.12:0.9.0,org.apache.spark:spark-avro_2.12:3.0.1 --conf spark.serializer=org.apache.spark.serializer.KryoSerializer
+
+# Define table name and base path 
+tableName = "transactions"
+basePath = "file:///C:/Data/transactions"
+
+# Read dataset 
+df = spark.read.load(r'C:\Data\transactions.csv', format="csv", sep=",", inferSchema="true", header="true")
+	
+#define options for hudi dataset
+hudi_options = {
+    'hoodie.table.name': tableName,
+    'hoodie.datasource.write.recordkey.field':'id',
+    'hoodie.datasource.write.partitionpath.field': '',
+    'hoodie.datasource.write.table.name': tableName,
+    'hoodie.datasource.write.operation': 'upsert',
+    'hoodie.datasource.write.precombine.field': 'BUS_DT',
+    'hoodie.upsert.shuffle.parallelism': 2,
+    'hoodie.insert.shuffle.parallelism': 2,
+}
+
+# import some libraries
+from pyspark import *
+from pyspark.sql import *	
+from pyspark.sql.functions import *
+
+#add index column
+df = df.select("*").withColumn("id", monotonically_increasing_id())
+
+# create hudi dataset/ write hudi dataset
+df.write.format("hudi").options(**hudi_options).mode("overwrite").save(basePath)
+
+# read hudi dataset
+transactions = spark.read.format("hudi").load(basePath + "/*/*")
+
+# create table
+transactions.createOrReplaceTempView("transactions")
+
+# view entire table
+spark.sql("SELECT * FROM transactions").show()
+
+# total minutes
+spark.sql("SELECT sum(Number_of_minutes) FROM transactions").show() #190262
+
+# Select dataset to be removed 
+df = spark.sql("select id, Activity_Type, BUS_DT from transactions WHERE A_PARTY_NUMBER = 923111470351")
+
+# define delete options
+hudi_delete_options = {
+  'hoodie.table.name': tableName,
+  'hoodie.datasource.write.recordkey.field': 'id',
+  'hoodie.datasource.write.partitionpath.field': '',
+  'hoodie.datasource.write.table.name': tableName,
+  'hoodie.datasource.write.operation': 'delete',
+  'hoodie.datasource.write.precombine.field': 'BUS_DT',
+  'hoodie.upsert.shuffle.parallelism': 2, 
+  'hoodie.insert.shuffle.parallelism': 2
+}
+
+# Write new Hudi Dataset
+df.write.format("hudi").options(**hudi_delete_options).mode("append").save(basePath)
+
+# load new hudi dataset
+roAfterDeleteViewDF = spark.read.format("hudi").load(basePath + "/*/*") 
+
+# create table
+roAfterDeleteViewDF.registerTempTable("transactions")
+
+# view entire table after deletion
+spark.sql("SELECT * FROM transactions").show()
+
+# total minutes after deletion
+spark.sql("SELECT sum(Number_of_minutes) FROM transactions").show() #190260
+
+# Define the required version
+beginTime = "000"
+endTime = 20210831161553
+
+# Define options for the required version
+point_in_time_read_options = {
+  'hoodie.datasource.query.type': 'incremental',
+  'hoodie.datasource.read.end.instanttime': endTime,
+  'hoodie.datasource.read.begin.instanttime': beginTime
+}
+
+# Read the required hudi version
+df = spark.read.format("hudi").options(**point_in_time_read_options).load(basePath)
+
+# Create Table
+df.createOrReplaceTempView("transactions")
+
+# view entire table
+spark.sql("SELECT * FROM transactions").show()
+
+# total minutes
+spark.sql("SELECT sum(Number_of_minutes) FROM transactions").show() #190262
+
+
+
+You can check if pushdown for a specific query is performed by looking at the explain plan of the query. The explain plan for a query shows all operations that are performed on the starburst engine. The push down capability can be verified by prepending the query with 'explain'. The push down capability depends on the connector. 
+
+
+
+
+
+
+HUDI CONFIGURATION
+
+Install VC++ 2010
+Set JAVA_HOME in Environment path
+Set JAVA_HOME, HADOOP_HOME, SPARK_HOME in System path
+Set PYSPARK_PYTHON
+

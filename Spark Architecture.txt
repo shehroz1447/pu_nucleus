@@ -1,0 +1,40 @@
+SPARK ARCHITECTURE
+
+Spark works on master/slave architecture with a resource manager
+
+*** MAIN COMPONENTS ***
+Master Node:
+Worker Node:
+Resource Manager:
+Driver Program: Created at Spark Submit that communicates with Master Node (for Spark) or Application Master (for Yarn) to coordinate the jobs that are running in the Worker Node
+Executor: (i.e. Container i.e. cpu+memory) A jvm that is launched by a worker node for code execution, recieves a partition
+	NOTE: 1 Worker Node can have more than 1 Executor
+Shuffle: When data is repartitoned across the cluster due to the logic in the code
+Partition: Logical chunk of the RDD/DF/DS
+
+*** EXECUTION ORDER ***
+JOB --> STAGE --> TASK
+
+Types of Jobs:
+Transformation:
+Action:
+
+Job: Sequence of Stages, triggered by an Action (represented by a DAG)
+Stage: Sequence of Tasks that can all be run together, in parallel, without a shuffle 
+	NOTE: Between each change in stage, a shuffle occurs
+Task: Unit of execution in Spark that is assigned to a partition of data
+
+*** SPARK-SUBMIT PARAMETERS ***
+--num-executors: number of total executors across the nodes in the cluster
+--executor-memory: maximum memory the tasks can use when running in parallel on an executor
+--executor-cores: maximum number of tasks that can run in parallel on an executor
+--driver-memory: memory allocation for the Driver program (.collect() or .take() takes complete data to driver)
+
+no. of exec. = no. of cores / cores per exec.
+
+In a cluster, one core is reserved for each node for communication between the nodes
+In a cluster, one (or more) core needs to be reserved for driver program
+
+*** RESOURCES ***
+https://queirozf.com/entries/apache-spark-architecture-overview-clusters-jobs-stages-tasks
+https://luminousmen.com/post/spark-tips-partition-tuning#:~:text=The%20general%20recommendation%20for%20Spark,take%20100ms%2B%20time%20to%20execute.

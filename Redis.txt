@@ -1,0 +1,66 @@
+REDIS
+
+BASICS
+	DEFINE KV
+		SET <key> <value>
+
+	GET V
+		GET <key>
+
+	DEL KV
+		DEL <key>
+
+	CHECK IF KV EXISTS
+		EXISTS <key>
+
+	SHOW ALL KEYS
+		KEYS *
+
+	DELETE ALL
+		FLUSHALL
+
+TTL
+	DEFINE KV AND TTL
+		SETEX <key> <time> <value>
+
+	CHECK TTL STATUS
+		TTL <key>
+
+	SET TTL
+		EXPIRE <key> <time>
+
+ARRAY
+	DEFINE ARRAY KV	
+		LPUSH <key> <value1>
+		RPUSH <key> <value1>
+		
+	GET ARRAY V
+		LRANGE <key> <startindex> <endindex>
+		RRANGE <key> <startindex> <endindex>
+		
+	REMOVE ONE V
+		LPOP <key>
+		RPOP <key>
+
+SET
+	DEFINE SET KV	
+		SADD <key> <value>
+
+	GET SET V
+		SMEMBERS <key>
+
+	REMOVE V
+		SREM <key> <value>
+
+HASH
+	DEFINE HASH KV
+		HSET <key> <<innerkey> <innervalue>>
+
+	GET HASH V
+		HGET <key>
+
+	GET HASH INNER V
+		HGET <key> <inner key>
+
+	GET ALL
+		HGETALL <key>

@@ -1,0 +1,28 @@
+AIRFLOW
+
+Libraries
+	from datetime import timedelta
+	from airflow import DAG
+	from airflow.operators.bash_operator import BashOperator
+	from airflow.utils.dates import days_ago
+from airflow.models import BaseOperator
+LIST DAGS
+	airflow dags list
+
+LIST TASKS OF A DAG
+	airflow tasks list dag_name
+
+UNPAUSE A DAG
+	airflow dags unpause dag_name
+
+PAUSE A DAG
+	airflow dags pause dag_name
+
+MOVE FILE TO DAGS REPOSITORY
+	cp my_first_dag.py $AIRFLOW_HOME/dags
+
+LOGS FILE LOCATION
+	logs/dag_id/task_id/execution_date/try_number.log
+	
+AIRFLOW INSTALLATION PROCEDURE
+https://medium.com/@ryanroline/installing-apache-airflow-on-windows-10-5247aa1249ef

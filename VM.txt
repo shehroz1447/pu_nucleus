@@ -1,0 +1,15 @@
+VM Installation and Setup
+
+1. Download VM
+	https://www.virtualbox.org/wiki/downloads
+
+2. Download Image
+	https://www.cloudera.com/downloads/hortonworks-sandbox/hdp.html
+
+3. Load Image on VM
+
+4. Login as root/hadoop on Putty (127.0.0.1:2222) and change password
+
+5. Reset Ambari Password
+	ambari-server restart  
+	ambari-admin-password-reset

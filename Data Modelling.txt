@@ -1,0 +1,77 @@
+DATA MODELLING/DATA WAREHOUSING/DIMENTSIONAL MODELLING
+
+DATA WAREHOUSING: Using DWH tools to model data in a manner that enables analytics and BI
+
+OLAP CUBES: Data arrangement in DWH, where the data is divided into fact and dimension tables
+
+DIMENSION TABLES: This table contains textual information (a certain window) for viewing the fact table
+
+FACT TABLES: This table contains measures and foreign keys of dimensions
+
+GRAIN: The lowest data level or the atomic level
+
+ADDITIVE FACT: A certain measure that can be fully summed across all dimensions
+
+SEMI-ADDITIVE FACT: A certain measure that can be partially summed across all dimensions
+
+NON-ADDITIVE FACT: A certain measure that can't be summed across any dimensions
+
+FACTLESS FACT TABLE: A fact table without any measures
+
+CONFORMED DIMENSION TABLES: A dimension table that can be resued by other fact tables
+
+CONFORMED FACT TABLES: A fact table that can be by other fact tables
+
+AGGREGATE TABLES: A table that contains predefined aggregations, used to boost performance
+
+SUMMARY INFORMATION: Stores predefined aggreagations
+
+ETL: Transfroming data to move it from data lake to data warehouse
+
+DATAMARTS: Smaller version of DWH which deals with with a single subject and limited sources
+
+METADATA: Information about the stored data in the DWH
+
+DATAMINING: Process of analyzing data from the DWH in different dimensions and summarizing it into useful information
+
+OLAP CUBE PROCESS - ROLL UP: Performing aggregation on data cube
+
+OLAP CUBE PROCESS - DRILL DOWN: Reverse operation of Roll up
+
+OLAP CUBE PROCESS - SLICE: Making a new sub cube from one dimension
+
+OLAP CUBE PROCESS - DICE: Making a new sub cube from two or more dimensions
+
+OLAP CUBE PROCESS - PIVOT: Transpostioning axes for a new alternative presentation of data
+
+NORMALIZATION: Normalization in databases splits data into multiple tables. Reduces data redundancy. Faster Writes.
+
+NORMALIZATION - 1NF: Each table cell should contain a single value and each record needs to be unique
+
+NORMALIZATION - 2NF: (1NF) and Single Column Primary Key that does not functionally dependant on any subset of candidate key relation
+
+NORMALIZATION - 3NF: (2NF) and has no transitive functional dependencies
+
+ER DIAGRAM: Illustration of entities in databases. NO ER diagram in DWH only in DB
+
+DIMENSONAL MODELING - CONCEPTUAL MODELLING:
+
+DIMENSONAL MODELING - LOGICAL MODELLING: 
+
+DIMENSONAL MODELING - PHYSICAL MODELLING:
+
+SLOWLY CHANGING DIMENSIONS (SCD):
+
+DWH SCHEMAS - STAR:
+
+DWH SCHEMAS - SNOWFLAKE:
+
+DWH SCHEMAS - FACT CONSTELLATION:
+
+SCEHEMA DEFINITION: Data Manipulation Query Language(DMQL)
+
+
+
+RESOURCE: https://www.youtube.com/watch?v=9gOw3joU4a8
+
+

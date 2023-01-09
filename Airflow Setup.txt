@@ -1,0 +1,41 @@
+Installing Airflow on Ubuntu
+
+Step 0: Install OS
+Download Ubuntu from Windows Store
+
+Step 1: Update the System.
+apt-get update
+
+Step 2: Install the required packages.
+apt-get install software-properties-common
+apt-add-repository universe
+apt-get update
+
+Step 3: Install the python3-pip.
+apt-get install python-setuptools
+apt install python3-pip
+
+Step 4: Install the required dependencies for Apache Airflow.
+apt-get install libmysqlclient-dev
+apt-get install libssl-dev
+apt-get install libkrb5-dev
+
+Step 5: Install the Env and activate
+apt install python3-virtualenv
+virtualenv airflow_example
+cd airflow_example/bin/
+source activate
+export AIRFLOW_HOME=~/airflow
+
+Step 5: Install Apache-Airflow 
+pip install "apache-airflow==2.3.3" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.3/constraints-3.8.txt"
+pip install typing_extensions
+
+Step 6: Initialize Airflow
+airflow db init
+airflow users create --username shehroz1447 --firstname Shehroz --lastname Abdullah --role Admin --email shehroz1447@gmail.com
+airflow scheduler -D (keep this running)
+
+Step 7: In a new Shell
+airflow webserver -p 8080
+head to localhost:8080

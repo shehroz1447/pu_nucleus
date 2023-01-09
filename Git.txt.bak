@@ -1,0 +1,122 @@
+GIT
+
+BASIC GIT
+	GIT CONFIG
+		git config --global user.name "Shehroz Abdullah"
+		git config --global user.mail "shehroz1447@gmail.com"
+
+	CREATE GIT REPO
+		git init
+		
+	Branch Status
+		git status
+
+	COMMIT HISTORY
+		git log
+		git log --oneline                     # to find id of bad commit
+
+	REVERT (trivial changes)
+		git revert -n {hash}                  # revert to specific commit, dont create new commit yet
+		git revert {hash}                     # revert to specific commit, create new commit 
+		git revert HEAD                       # revert to previous commit, create new commit 
+		
+	RESET (sensitive changes)
+		git reset {hash} --hard               # reset to specific commit and wipe logs and files (no commit needed for reset)
+		git reset HEAD-1 --hard               # reset to second latest commit and wipe logs and files (no commit needed for reset)
+
+	STAGE FILES
+		git add filename                      # add one file to staging area
+		git add .                             # add all file to staging area 
+		
+	COMMIT FILES
+		git commit -m "{message}"
+
+	DIFFERENCES
+		git diff                              # changes between last two commits for all file
+		git diff {filename}                   # changes between last two commits for one file
+
+	REFRESH ALL CHANGES
+		git fetch --all
+ 
+BRANCH MANIPULATIONS
+	CURRENT BRANCH
+		git branch -v
+
+	CREATE BRANCH
+		git branch {branchname}
+
+	CREATE BRANCH AND SWITCH
+		git checkout -b {branchname} master
+
+	SWITCH BRANCH
+		git checkout {branchname}
+		
+	DELETE BRANCH
+		git branch -d {branchname}
+
+	MERGE BRANCH
+		git merge {branchname}                 # ensure you are not in the {branchname} 
+
+	NOTE: When merge conflict occures a new commit is created
+
+REMOTE MANIPULATIONS
+	LINK REMOTE REPO
+		git remote add origin {gitrepourl}
+
+	REMOVE REMOTE REPO
+		git remote remove origin
+
+	CURRENT REMOTE REPO
+		git remote -v
+		
+	CHECK IF CHANGES OCCURED
+		git fetch
+		git fetch --all
+		
+	PUSH TO REMOTE REPO
+		git push origin {branchname}		   # push one branch to remote
+		git push --all origin		           # push all branch to remote
+		git push -u origin {branchname}        # make {branchname} default for the git push command
+		git push -f origin {branchname}
+        git push                               # push one branch to remote that was specifed with the -u flag
+
+	PULL FROM REMOTE REPO
+		git pull origin {branchname}           # pull to one branch from remote
+
+	CLONE (copy a remote repo to local)
+		git clone {gitrepourl} 
+		
+	FORK (copy a remote repo to another remote) (done for access privileges)
+	
+ADVANCED
+	IGNORE FILES
+		.gitignore (create .gitignore and write name of files to ignore)
+
+	STORE STASH (store a copy if dont want to commit)
+		git stash save
+
+	APPLY STASH
+		git stash pop
+	
+	STASH LIST 
+		git stash list
+
+	STASH CLEAR
+		git stash clear
+
+	STASH APPLY LATEST
+		git stash apply
+
+	STASH APPLY SPECIFIC
+		git stash apply 2		
+
+	REBASE (alternate to merge, base of branch changed to lastest commit of other branch)
+
+	SQUASH (squeeze commits)
+	
+	CREATE UPSTREAM
+
+
+
+RESOURCES
+https://www.youtube.com/watch?v=1tC6Z57AOkY

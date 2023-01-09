@@ -1,0 +1,9 @@
+Your API token is
+sha256~mJCZ1NeHu87kUVAentm7M3T88lgniVEOEnazM7EOAc4
+Log in with this token
+oc login --token=sha256~mJCZ1NeHu87kUVAentm7M3T88lgniVEOEnazM7EOAc4 --server=https://c102-e.eu-de.containers.cloud.ibm.com:30600
+Use this token directly against the API
+curl -H "Authorization: Bearer sha256~mJCZ1NeHu87kUVAentm7M3T88lgniVEOEnazM7EOAc4" "https://c102-e.eu-de.containers.cloud.ibm.com:30600/apis/user.openshift.io/v1/users/~"
+
+
+Request another token

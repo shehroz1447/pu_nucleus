@@ -1,0 +1,182 @@
+MONGO
+
+CONNECTION STRING: SHELL
+	mongo "mongodb+srv://cluster0.9kjlg.mongodb.net/mflix" --username shehroz
+
+CONNECTION STRING: PYTHON
+	mongodb+srv://shehroz:jflg1447@cluster0.9kjlg.mongodb.net/mflix?retryWrites=true&w=majority
+
+CONNECTION STRING: COMPASS
+	mongodb+srv://shehroz:jflg1447@cluster0.9kjlg.mongodb.net
+
+LIST DATABASES
+	show databases
+
+ENTER DATABASE
+	use mydb
+
+CURRENT DB
+	db
+
+DELETE DATABASE
+	db.dropDatabase()
+
+CREATE COLLECTION
+	db.createCollection('mycollection')
+
+LIST COLLECTIONS
+	show collections
+
+DELETE COLLECTION
+	db.mycollection.drop()
+
+INSERT DOCUMENT
+	INSERT ONE
+	db.mycollection.insertOne(
+		{
+		First_Name: "Radhika",
+		Last_Name: "Sharma",
+		Date_Of_Birth: "1995-09-26",
+		e_mail: "radhika_sharma.123@gmail.com",
+		phone: "9848022338"
+		})
+
+	INSERT MANY
+	db.mycollection.insertMany(
+		[	{
+			First_Name: "Radhika",
+			Last_Name: "Sharma",
+			Date_Of_Birth: "1995-09-26",
+			e_mail: "radhika_sharma.123@gmail.com",
+			phone: "9000012345"},
+			{
+			First_Name: "Rachel",
+			Last_Name: "Christopher",
+			Date_Of_Birth: "1990-02-16",
+			e_mail: "Rachel_Christopher.123@gmail.com",
+			phone: "9000054321"},
+			{
+			First_Name: "Fathima",
+			Last_Name: "Sheik",
+			Date_Of_Birth: "1990-02-16",
+			e_mail: "Fathima_Sheik.123@gmail.com",
+			phone: "9000054321"}
+		])
+
+FIND (FULL COLLECTION)
+	db.mycollection.findOne({First_Name: "Radhika"}).pretty()
+	db.testCollection.find({First_Name: "Radhika"}).pretty()
+
+FIND (SELECTIVE COLLECTION)
+	db.testCollection.find({First_Name: "Radhika"}, {First_Name: 1, Last_Name: 1}).pretty()
+
+IF
+	equal to
+	db.col.find({age: { $eq : 12}).pretty()
+	
+	not equal to
+	db.col.find({age: { $ne : 12}).pretty()
+
+	greater than
+	db.col.find({age: { $gt : 12}).pretty()
+	
+	greater than equal to
+	db.col.find({age: { $gte : 12}).pretty()
+
+IN
+	db.col.find({name: { $in : ["Radhika", "Rachel"] }).pretty()
+	
+NOT IN
+	db.col.find({name: { $nin : ["Radhika", "Rachel"] }).pretty()
+
+NOT
+	db.col.find({age: { $not : 12}).pretty()
+	
+NOT + GT = LTE
+	db.col.find({Age: {$not: { $gt: 12}}}).pretty()
+
+KEY EXIST OR NOT 
+	db.col.find({ age: {$exists:true}})
+	db.col.find({ age: {$exists:false}})
+
+AND	( '$and' and ',' do same thing)
+	db.col.find({ age: {$gte: 20},{$lte: 40} }).pretty()
+	or
+	db.col.find({ $and:[{$gte: 20},{$lte: 40}] }).pretty()
+
+OR
+	db.testCollection.find({ $or:[{First_Name: "Radhika"},{First_Name: "Rachel"}] }).pretty()
+
+AND + OR
+	db.mycollection.find({ $or: [{"by": "tutorials point"}, {"title": "MongoDB Overview"}], { "likes": {$gt:10}} }).pretty()
+
+NOR
+	db.mycollection.find({ $nor:[{"by":"tutorials point"},{"title": "MongoDB Overview"}] }).pretty()
+
+EXPRESSION
+	db.col.find({$expr: {$gt: ["$debt, "$balance"]} })
+
+EMBEDDED FIND (key also to be in quotes)
+	db.col.find({"address.street": "123 Main st"})
+
+COUNT
+	db.users.countDoucment({age: {$gte: 20}})
+
+UPDATE
+	db.empDetails.update( {'title':'MongoDB Overview'}, {$set:{'title':'New MongoDB Tutorial'} }
+
+UPDATE ONE
+	db.empDetails.updateOne( {Age:{ $gt: "25" }}, { $set: { Age: '00'}} )
+	
+INCREMENT (by 2)
+	db.col.update(age: 26, {$inc{age: 2}} )
+	
+RENAME 
+	db.col.update(age: 26, {$rename{age: "new_age"}} )
+
+UNSET/REMOVE	
+	db.col.update(age: 26, {$unset{age: ""}} )
+
+SET/ADD
+	db.col.update(age: 26, {$set{age: ""}} )
+
+PUSH
+	db.col.update(age: 26, {$push {hobbies: "swimming"}} )
+
+PULL
+	db.col.update(age: 26, {$push {hobbies: "swimming"}} )
+
+UPDATE MANY
+	db.col.updateMany( {address:{ $exists: true }}, { $unset: { address: ""}})
+
+REPALCE (replace everything with name "john" if age 30 is found
+	db.col.replace({age: 30},{name: "John"})
+
+REMOVE
+	db.mycol.remove({'title':'MongoDB Overview'})
+
+REMOVE ALL
+	db.mycol.remove({})
+
+DELETE
+	db.col.delete (age: {$exists: false}})
+
+LIMIT
+	db.mycol.find().limit(1)
+	
+SKIP
+	db.mycol.find().limit(1).skip()
+	
+SORT	
+	db.mycol.find().sort({"title":-1})	
+	1 = asc, -1 = des
+	
+AGGREGATION
+	db.movies_initial.aggregate([ { '$group': {_id: "$language", count: {'$sum':1}} } ]) 
+
+AGGREGATE AND FIND
+	db.movies_initial.aggregate({ '$match': {'language': 'Korean, English'} }) 
+	
+RESOURCES
+	https://www.tutorialspoint.com/mongodb/index.htm
+	https://www.youtube.com/watch?v=ofme2o29ngU

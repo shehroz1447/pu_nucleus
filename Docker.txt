@@ -1,0 +1,47 @@
+DOCKER
+
+CHECK VERSION
+	docker version
+	docker -v
+
+CREATE DOCKERFILE
+	touch Dockerfile
+	
+EDIT DOCKERFILE
+	vim Dockerfile
+
+SAMPLE DOCKERFILE
+
+	FROM python:3.8
+	ADD <filename.py> .
+	RUN pip install <package_name>
+	CMD [ "python", "./main.py"]
+
+
+BUILD DOCKER IMAGE 
+	docker build -t <image_name>:<tag> .
+
+LIST ALL IMAGES
+	docker image ls
+
+RUN IMAGE
+	docker run <path>/<image_name>
+
+RUN IMAGE WITH USER INPUTS
+	docker run -t -i <path>/<image_name>
+
+LIST RUNNING IMAGES
+	docker ps 
+
+LIST ALL IMAGES
+	docker ps -a
+
+RUN INTERACTIVE IMAGE
+	docker run -it <image>
+
+PULL IMAGE FROM DOCKERHUB
+	docker pull <path>/<image_name>
+
+
+
+
